@@ -11,3 +11,8 @@ node_modules/
 .pipeline-state.json
 .gitkeep
 .progress
+.db_decision
+.deploy_url
+.env.production
+ui-verify.js
+verify-screenshot.png
