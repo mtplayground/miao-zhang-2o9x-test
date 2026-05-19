@@ -1,5 +1,6 @@
 target/
 node_modules/
+__pycache__/
 .gh_token
 .claude/
 .database_url
