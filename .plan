@@ -1,0 +1,51 @@
+Architecture plan for the 10-issue implementation sequence
+
+Project shape
+- Build a dependency-free static web app using plain HTML, CSS, and JavaScript.
+- Keep the initial surface small: index.html, styles.css, and JavaScript modules under src/.
+- Add Playwright only when Issue #10 introduces browser smoke testing.
+
+Proposed file organization
+- index.html
+  - Semantic document shell, application landmark structure, todo form, list region, filters, clear action, and footer.
+  - Load the app with a single module script: src/main.js.
+- styles.css
+  - Base reset, theme tokens, responsive layout, card styling, form/list/footer states.
+- src/storage.js
+  - STORAGE_KEY constant.
+  - loadTodos() and saveTodos(todos) functions.
+  - Safe fallback when localStorage is unavailable, corrupt, or blocked.
+- src/state.js
+  - createTodo(title), addTodo(state, title), toggleTodo(state, id), deleteTodo(state, id), clearCompleted(state), setFilter(state, filter).
+  - generateId() helper, preferring crypto.randomUUID() with Date/random fallback.
+  - Shared todo shape: { id: string, title: string, completed: boolean, createdAt: string }.
+  - Shared filter values: "all", "active", "completed".
+- src/render.js
+  - renderApp(state, elements), renderTodoList(todos, filter, listEl), renderCounts(state, elements).
+  - DOM creation should use element APIs and textContent for user-provided text.
+- src/main.js
+  - Query required DOM elements on DOMContentLoaded.
+  - Load persisted state, render once, wire events, and persist after state changes.
+- tests/todo.spec.js or tests/smoke.spec.js
+  - Single Playwright smoke spec for add, toggle/filter, clear/delete, and reload persistence.
+
+Issue dependencies
+- Issue #1 establishes the semantic HTML anchors and IDs/classes used by all later work.
+- Issue #2 styles the shell and card layout created by Issue #1.
+- Issue #3 completes the form, list, filter, clear, and footer UI surface required by later behavior.
+- Issue #4 can be implemented independently once JavaScript modules exist, but is consumed by Issue #8.
+- Issue #5 defines the state shape and mutation helpers consumed by rendering and events.
+- Issue #6 depends on the DOM structure from Issues #1/#3 and the state shape from Issue #5.
+- Issue #7 depends on storage, state, and render modules so events can mutate, persist, and repaint.
+- Issue #8 composes Issues #4-#7 into the DOMContentLoaded bootstrap.
+- Issue #9 should document manual QA after the app behavior exists.
+- Issue #10 should be last because the smoke test needs the final UI and behavior.
+
+Key design decisions
+- Use ES modules and explicit imports to keep each issue scoped and reviewable.
+- Use immutable state returns from state helpers where practical, so event code remains predictable.
+- Store only serializable todo data in localStorage; derive counts and filtered views during render.
+- Treat localStorage failures as non-fatal: the app should still work in memory for the session.
+- Keep IDs stable and opaque; never derive behavior from todo text or list position.
+- Prefer accessible controls: labels for inputs, buttons for actions, aria-live for count/status updates, and list semantics for todos.
+- Do not introduce a framework or build step for the core app; static files are enough for the requested functionality.
