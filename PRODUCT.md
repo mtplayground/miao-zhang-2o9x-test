@@ -2,7 +2,7 @@
 
 ## What This Is
 
-`miao-zhang-2o9x-test` is a dependency-light, browser-only todo app shipped as a static `index.html` with ES modules under `src/`.
+`miao-zhang-2o9x-test` is a dependency-light todo app. The product is browser-only and ships as static HTML, inline CSS, and ES modules, with a tiny Python static server available for deployment.
 
 ## Current Behavior
 
@@ -22,13 +22,14 @@
 - `src/state.js` owns task creation, ID generation, and immutable task mutations; mutations persist and call the registered render callback.
 - `src/render.js` rebuilds the task list from current task/filter state and updates counters, filter button state, empty states, and Clear completed visibility.
 - `src/events.js` wires form submission, delegated list clicks, filter buttons, and Clear completed.
+- `server.py` serves the static app on `PORT`/8080 for deployed environments and suppresses per-request access logs so backend log checks stay signal-only.
 
 ## Conventions
 
 - No frontend framework or build step is required for the product.
 - Task IDs prefer `crypto.randomUUID()` and fall back to a timestamp/random local ID.
 - User text is written with DOM APIs and `textContent`, not HTML string interpolation.
-- The shipped product remains static files; Node tooling is only for tests.
+- The shipped product remains static files; Node tooling is only for tests, and Python is only used as the deployment static-file server.
 
 ## Quality Checks
 
