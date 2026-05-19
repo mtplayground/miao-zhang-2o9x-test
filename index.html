@@ -13,7 +13,9 @@
         --color-muted: #5f6f89;
         --color-border: #d8e0ec;
         --color-accent: #2563eb;
+        --color-accent-soft: #e8efff;
         --color-accent-strong: #1d4ed8;
+        --color-button-text: #ffffff;
         --shadow-card: 0 24px 60px rgba(23, 32, 51, 0.14);
         --space-1: 0.25rem;
         --space-2: 0.5rem;
@@ -36,7 +38,9 @@
           --color-muted: #a9b7cf;
           --color-border: #2c3a52;
           --color-accent: #7aa2ff;
+          --color-accent-soft: #233456;
           --color-accent-strong: #a9c1ff;
+          --color-button-text: #10213f;
           --shadow-card: 0 24px 60px rgba(0, 0, 0, 0.34);
           --focus-ring: 0 0 0 3px rgba(122, 162, 255, 0.38);
         }
@@ -94,7 +98,7 @@
         margin-top: var(--space-5);
       }
 
-      form {
+      .todo-form {
         display: grid;
         gap: var(--space-3);
       }
@@ -118,7 +122,7 @@
         border-radius: var(--radius-2);
         padding: var(--space-3) var(--space-4);
         background: var(--color-accent);
-        color: var(--color-surface);
+        color: var(--color-button-text);
         cursor: pointer;
       }
 
@@ -126,14 +130,61 @@
         background: var(--color-accent-strong);
       }
 
-      ul {
-        min-height: var(--space-6);
-        margin-bottom: 0;
-        padding-left: var(--space-5);
+      .todo-list {
+        min-height: 5rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
       }
 
-      footer {
+      .empty-state {
+        display: grid;
+        min-height: 5rem;
+        place-items: center;
+        border: 1px dashed var(--color-border);
+        border-radius: var(--radius-2);
         color: var(--color-muted);
+        text-align: center;
+      }
+
+      .todo-footer {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-3);
+        color: var(--color-muted);
+      }
+
+      .todo-count {
+        font-weight: 600;
+      }
+
+      .filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+      }
+
+      .filter-button,
+      .clear-button {
+        border: 1px solid transparent;
+        padding: var(--space-2) var(--space-3);
+        background: transparent;
+        color: var(--color-muted);
+      }
+
+      .filter-button:hover,
+      .clear-button:hover {
+        border-color: var(--color-border);
+        background: var(--color-accent-soft);
+        color: var(--color-text);
+      }
+
+      .filter-button[aria-pressed="true"] {
+        border-color: var(--color-accent);
+        background: var(--color-accent-soft);
+        color: var(--color-text);
       }
 
       :focus {
@@ -145,6 +196,28 @@
         outline: 2px solid transparent;
         outline-offset: 2px;
       }
+
+      @media (min-width: 36rem) {
+        .todo-form {
+          grid-template-columns: 1fr auto;
+        }
+
+        .todo-form label {
+          grid-column: 1 / -1;
+        }
+      }
+
+      @media (max-width: 35.9375rem) {
+        body {
+          justify-content: flex-start;
+        }
+
+        .todo-footer,
+        .filters {
+          align-items: stretch;
+          flex-direction: column;
+        }
+      }
     </style>
   </head>
   <body>
@@ -153,19 +226,29 @@
     </header>
 
     <main>
-      <section aria-labelledby="todo-card-title">
+      <section class="todo-card" aria-labelledby="todo-card-title">
         <h2 id="todo-card-title">Todo List</h2>
 
-        <form>
+        <form id="todo-form" class="todo-form">
           <label for="todo-input">New todo</label>
-          <input id="todo-input" name="todo" type="text" autocomplete="off">
+          <input id="todo-input" name="todo" type="text" autocomplete="off" placeholder="What needs to be done?">
           <button type="submit">Add</button>
         </form>
 
-        <ul aria-label="Todos"></ul>
+        <ul id="todo-list" class="todo-list" aria-label="Todos">
+          <li class="empty-state">No tasks yet.</li>
+        </ul>
 
-        <footer>
-          <p>0 items</p>
+        <footer class="todo-footer">
+          <p id="todo-count" class="todo-count" aria-live="polite">0 items</p>
+
+          <div class="filters" aria-label="Filter todos">
+            <button class="filter-button" type="button" data-filter="all" aria-pressed="true">All</button>
+            <button class="filter-button" type="button" data-filter="active" aria-pressed="false">Active</button>
+            <button class="filter-button" type="button" data-filter="completed" aria-pressed="false">Completed</button>
+          </div>
+
+          <button id="clear-completed" class="clear-button" type="button">Clear completed</button>
         </footer>
       </section>
     </main>
