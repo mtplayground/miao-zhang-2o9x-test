@@ -99,7 +99,7 @@ function createTaskRow(task) {
   text.textContent = taskText;
 
   const deleteButton = document.createElement("button");
-  deleteButton.className = "task-delete";
+  deleteButton.className = "task-delete delete";
   deleteButton.type = "button";
   deleteButton.dataset.action = "delete";
   deleteButton.textContent = "Delete";
